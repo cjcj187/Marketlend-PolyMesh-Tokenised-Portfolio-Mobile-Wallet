@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Polymesh Portfolio Viewer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --color-bg: #0F6A6C;         /* teal background */
+      --color-bg-soft: #0D4E52;    /* darker teal for header */
+      --color-card: #F5F7F8;       /* light grey card */
+      --color-accent: #C7F284;     /* lime accent */
+      --color-accent-soft: #2E6F4D;/* forest green */
+      --color-text-main: #1F5F63;  /* deep teal text */
+      --color-text-muted: #6F7480; /* muted grey text */
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --shadow-card: 0 18px 45px rgba(0,0,0,0.35);
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #1F5F63, #0B3B3F 45%, #06191B 90%);
+      color: var(--color-text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .app {
+      width: 100%;
+      max-width: 480px;
+    }
+    .shell {
+      background: linear-gradient(135deg, var(--color-bg-soft), var(--color-bg));
+      border-radius: 32px;
+      padding: 2px;
+      box-shadow: var(--shadow-card);
+    }
+    .inner {
+      border-radius: 30px;
+      background: radial-gradient(circle at top, rgba(199,242,132,0.08), rgba(245,247,248,1));
+      padding: 24px 20px 20px;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      gap: 12px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #C7F284, #2E6F4D);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #05201D;
+      font-weight: 700;
+      font-size: 0.9rem;
+      box-shadow: 0 8px 18px rgba(7,38,33,0.5);
+    }
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+    .brand-title {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: #042629;
+    }
+    .brand-sub {
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+    }
+    .pill {
+      border-radius: 999px;
+      border: 1px solid rgba(15,106,108,0.28);
+      padding: 6px 10px;
+      background: rgba(15,106,108,0.04);
+      font-size: 0.7rem;
+      color: var(--color-text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #4ADE80;
+      box-shadow: 0 0 0 4px rgba(74,222,128,0.25);
+    }
+    .hero {
+      margin-bottom: 18px;
+    }
+    .hero-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #031618;
+      margin: 0 0 4px;
+    }
+    .hero-sub {
+      margin: 0;
+      font-size: 0.8rem;
+      color: var(--color-text-muted);
+    }
+    .form {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    label {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--color-text-main);
+    }
+    .input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid #D1D6DE;
+      background: #FFFFFF;
+      font-size: 0.85rem;
+      color: var(--color-text-main);
+      outline: none;
+    }
+    input[type="text"]::placeholder {
+      color: #9AA0AF;
+    }
+    input[type="text"]:focus {
+      border-color: var(--color-bg);
+      box-shadow: 0 0 0 1px rgba(15,106,108,0.2);
+    }
+    button {
+      border-radius: 999px;
+      border: none;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: linear-gradient(135deg, var(--color-accent), #E5FFB2);
+      color: #08220D;
+      box-shadow: 0 12px 24px rgba(32,92,44,0.35);
+    }
+    button:disabled {
+      opacity: 0.7;
+      cursor: default;
+      box-shadow: none;
+    }
+    .status {
+      min-height: 1.1em;
+      font-size: 0.75rem;
+      margin-top: 2px;
+      color: var(--color-text-muted);
+    }
+    .status.error {
+      color: #DC2626;
+    }
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .pill-tag {
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.7rem;
+      background: rgba(15,106,108,0.06);
+      color: var(--color-text-muted);
+    }
+    .card {
+      margin-top: 16px;
+      background: rgba(255,255,255,0.85);
+      border-radius: var(--radius-lg);
+      padding: 12px 12px 10px;
+      border: 1px solid rgba(209,214,222,0.8);
+      backdrop-filter: blur(12px);
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .card-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--color-text-main);
+    }
+    .address {
+      font-family: "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.7rem;
+      color: var(--color-text-muted);
+      word-break: break-all;
+    }
+    .badge-soft {
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 0.7rem;
+      background: rgba(199,242,132,0.18);
+      color: var(--color-accent-soft);
+      border: 1px solid rgba(199,242,132,0.6);
+    }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .metric {
+      padding: 8px 10px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, rgba(246,249,253,1), rgba(230,239,243,1));
+      border: 1px solid rgba(222,230,239,0.9);
+    }
+    .metric-label {
+      font-size: 0.7rem;
+      color: var(--color-text-muted);
+      margin-bottom: 2px;
+    }
+    .metric-value {
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      color: var(--color-text-main);
+      word-break: break-all;
+    }
+    .tokens-card {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(209,214,222,0.9);
+    }
+    .tokens-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .tokens-title {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--color-text-main);
+    }
+    .tokens-note {
+      font-size: 0.68rem;
+      color: var(--color-text-muted);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.75rem;
+      margin-top: 4px;
+    }
+    th, td {
+      text-align: left;
+      padding: 4px 2px;
+    }
+    th {
+      font-weight: 500;
+      color: var(--color-text-muted);
+      border-bottom: 1px solid rgba(209,214,222,0.9);
+    }
+    td {
+      color: var(--color-text-main);
+      vertical-align: top;
+    }
+    td.numeric {
+      text-align: right;
+      font-family: "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+    .token-type {
+      font-size: 0.68rem;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.6);
+      background: rgba(248,250,252,0.9);
+      color: var(--color-text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .token-type-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--color-accent-soft);
+    }
+    .empty-state {
+      font-size: 0.72rem;
+      color: var(--color-text-muted);
+      padding: 4px 0 2px;
+    }
+    @media (min-width: 640px) {
+      body {
+        padding: 24px;
+      }
+      .inner {
+        padding: 26px 22px 22px;
+      }
+      .hero-title {
+        font-size: 1.35rem;
+      }
+    }
+  </style>
+
+  <!-- Polkadot.js browser bundles -->
+  <script src="https://unpkg.com/@polkadot/util/bundle-polkadot-util.js"></script>
+  <script src="https://unpkg.com/@polkadot/util-crypto/bundle-polkadot-util-crypto.js"></script>
+  <script src="https://unpkg.com/@polkadot/types/bundle-polkadot-types.js"></script>
+  <script src="https://unpkg.com/@polkadot/api/bundle-polkadot-api.js"></script>
+</head>
+<body>
+  <main class="app">
+    <div class="shell">
+      <div class="inner">
+        <header>
+          <div class="brand">
+            <div class="brand-badge">PM</div>
+            <div class="brand-text">
+              <span class="brand-title">Polymesh Portfolio</span>
+              <span class="brand-sub">Read-only wallet viewer</span>
+            </div>
+          </div>
+          <div class="pill">
+            <span class="pill-dot"></span>
+            <span>Mainnet live</span>
+          </div>
+        </header>
+
+        <section class="hero">
+          <h1 class="hero-title">View any Polymesh wallet in one tap.</h1>
+          <p class="hero-sub">
+            Paste a Polymesh address to see its on-chain POLYX balance. 
+            No login, no backend – all data loads directly from the network.
+          </p>
+
+          <div class="form">
+            <label for="address">Polymesh address (SS58)</label>
+            <div class="input-row">
+              <input id="address" type="text" placeholder="Paste a Polymesh mainnet address…" autocomplete="off" />
+              <button id="viewBtn" type="button">
+                <span id="btnLabel">View</span>
+              </button>
+            </div>
+            <div id="status" class="status"></div>
+          </div>
+
+          <div class="pill-row">
+            <div class="pill-tag">Client-side only</div>
+            <div class="pill-tag">No keys stored</div>
+            <div class="pill-tag">Reads direct from RPC</div>
+          </div>
+        </section>
+
+        <section id="resultCard" class="card" style="display:none;">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Account overview</div>
+              <div id="addressDisplay" class="address"></div>
+            </div>
+            <div class="badge-soft">POLYX native</div>
+          </div>
+
+          <div class="metrics">
+            <div class="metric">
+              <div class="metric-label">Free POLYX</div>
+              <div id="freePolyx" class="metric-value">-</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Reserved</div>
+              <div id="reservedPolyx" class="metric-value">-</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Misc frozen</div>
+              <div id="miscFrozen" class="metric-value">-</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Fee frozen</div>
+              <div id="feeFrozen" class="metric-value">-</div>
+            </div>
+          </div>
+
+          <div class="tokens-card">
+            <div class="tokens-header">
+              <div class="tokens-title">Tokens</div>
+              <div class="tokens-note">POLYX is always included. Other tokens will appear when portfolio queries succeed.</div>
+            </div>
+            <div id="tokensContainer">
+              <p class="empty-state">No token data loaded yet.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      const statusEl   = document.getElementById('status');
+      const resultCard = document.getElementById('resultCard');
+      const addrInput  = document.getElementById('address');
+      const btn        = document.getElementById('viewBtn');
+      const btnLabel   = document.getElementById('btnLabel');
+
+      const addrDisplay   = document.getElementById('addressDisplay');
+      const freePolyx     = document.getElementById('freePolyx');
+      const reservedPolyx = document.getElementById('reservedPolyx');
+      const miscFrozen    = document.getElementById('miscFrozen');
+      const feeFrozen     = document.getElementById('feeFrozen');
+      const tokensContainer = document.getElementById('tokensContainer');
+
+      const POLYMESH_RPC = 'wss://mainnet-rpc.polymesh.network';
+      const POLYX_DECIMALS = 10;
+
+      let api = null;
+      let connecting = false;
+
+      function setStatus(message, isError) {
+        statusEl.textContent = message || '';
+        if (isError) {
+          statusEl.classList.add('error');
+        } else {
+          statusEl.classList.remove('error');
+        }
+      }
+
+      function isProbablyAddress(value) {
+        if (!value) return false;
+        const trimmed = value.trim();
+        if (trimmed.length < 40 || trimmed.length > 64) return false;
+        if (/\\s/.test(trimmed)) return false;
+        return true;
+      }
+
+      function formatBalanceBigInt(balance, decimals) {
+        try {
+          const b = BigInt(balance.toString());
+          const divisor = BigInt(10 ** decimals);
+          const whole = b / divisor;
+          const frac = b % divisor;
+          let fracStr = frac.toString().padStart(decimals, '0');
+          // trim trailing zeros
+          fracStr = fracStr.replace(/0+$/, '');
+          return fracStr.length ? whole.toString() + '.' + fracStr : whole.toString();
+        } catch (e) {
+          console.warn('formatBalance error', e);
+          return balance.toString();
+        }
+      }
+
+      async function ensureApi() {
+        if (api || connecting) return api;
+        try {
+          connecting = true;
+          setStatus('Connecting to Polymesh mainnet…');
+          const provider = new polkadotApi.WsProvider(POLYMESH_RPC);
+          api = await polkadotApi.ApiPromise.create({ provider });
+          setStatus('Connected. Ready to query balances.');
+          return api;
+        } catch (err) {
+          console.error(err);
+          api = null;
+          setStatus('Failed to connect to Polymesh RPC.', true);
+          throw err;
+        } finally {
+          connecting = false;
+        }
+      }
+
+      async function loadPortfolio(address) {
+        const api = await ensureApi();
+
+        // Native POLYX
+        const accountInfo = await api.query.system.account(address);
+        const data = accountInfo.data;
+        const free = data.free;
+        const reserved = data.reserved;
+        const misc = data.miscFrozen;
+        const fee = data.feeFrozen;
+
+        const freeFmt = formatBalanceBigInt(free, POLYX_DECIMALS);
+        const reservedFmt = formatBalanceBigInt(reserved, POLYX_DECIMALS);
+        const miscFmt = formatBalanceBigInt(misc, POLYX_DECIMALS);
+        const feeFmt = formatBalanceBigInt(fee, POLYX_DECIMALS);
+
+        const tokens = [{
+          symbol: 'POLYX',
+          name: 'Polymesh Native',
+          assetId: 'NATIVE',
+          balance: freeFmt,
+          decimals: POLYX_DECIMALS,
+          isPolymeshNative: true,
+          type: 'Native'
+        }];
+
+        // Attempt to query portfolio for other tokens.
+        try {
+          const portfolioAssets = api.query.portfolio && api.query.portfolio.default
+            ? await api.query.portfolio.default(address)
+            : null;
+
+          if (portfolioAssets && typeof portfolioAssets.toJSON === 'function') {
+            const jsonData = portfolioAssets.toJSON();
+            const entries = [];
+
+            if (Array.isArray(jsonData)) {
+              entries.push(...jsonData);
+            } else if (jsonData && Array.isArray(jsonData.positions)) {
+              entries.push(...jsonData.positions);
+            }
+
+            for (const entry of entries) {
+              try {
+                const ticker = entry?.asset?.ticker || entry?.ticker;
+                const balanceRaw = entry?.balance || entry?.amount;
+                if (!ticker || ticker === 'POLYX' || balanceRaw == null) continue;
+
+                const assetDetailsQuery = api.query.asset && api.query.asset.tokens
+                  ? await api.query.asset.tokens(ticker)
+                  : null;
+
+                let decimals = 6;
+                let name = ticker;
+                if (assetDetailsQuery && typeof assetDetailsQuery.toJSON === 'function') {
+                  const details = assetDetailsQuery.toJSON();
+                  if (details && typeof details === 'object') {
+                    if (details.name) name = details.name;
+                    if (typeof details.decimals === 'number') decimals = details.decimals;
+                  }
+                }
+
+                tokens.push({
+                  symbol: ticker,
+                  name,
+                  assetId: ticker,
+                  balance: formatBalanceBigInt(balanceRaw, decimals),
+                  decimals,
+                  isPolymeshNative: false,
+                  type: 'Security Token'
+                });
+              } catch (innerErr) {
+                console.warn('Failed to parse asset entry', innerErr);
+              }
+            }
+          }
+        } catch (err) {
+          console.warn('Portfolio query failed; showing POLYX only.', err);
+        }
+
+        return {
+          address,
+          tokens,
+          balances: {
+            free: freeFmt,
+            reserved: reservedFmt,
+            misc: miscFmt,
+            fee: feeFmt
+          }
+        };
+      }
+
+      function renderPortfolio(data) {
+        addrDisplay.textContent = data.address;
+        freePolyx.textContent = data.balances.free;
+        reservedPolyx.textContent = data.balances.reserved;
+        miscFrozen.textContent = data.balances.misc;
+        feeFrozen.textContent = data.balances.fee;
+
+        // Render tokens
+        if (!data.tokens || data.tokens.length === 0) {
+          tokensContainer.innerHTML = '<p class="empty-state">No token balances found.</p>';
+        } else {
+          const rows = data.tokens.map(token => {
+            const typeLabel = token.type === 'Native' ? 'Native' : 'Security Token';
+            return `
+              <tr>
+                <td>
+                  <div>${token.symbol}</div>
+                  <div style="font-size:0.68rem;color:var(--color-text-muted);">${token.name}</div>
+                </td>
+                <td class="numeric">${token.balance}</td>
+                <td>
+                  <span class="token-type">
+                    <span class="token-type-dot"></span>${typeLabel}
+                  </span>
+                </td>
+                <td style="font-family:SF Mono,Menlo,monospace;font-size:0.68rem;color:var(--color-text-muted);word-break:break-all;">
+                  ${token.assetId}
+                </td>
+              </tr>
+            `;
+          }).join('');
+          tokensContainer.innerHTML = `
+            <table>
+              <thead>
+                <tr>
+                  <th>Token</th>
+                  <th class="numeric">Balance</th>
+                  <th>Type</th>
+                  <th>Asset ID</th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+          `;
+        }
+
+        resultCard.style.display = 'block';
+      }
+
+      async function handleView() {
+        const addr = addrInput.value.trim();
+        resultCard.style.display = 'none';
+        setStatus('', false);
+
+        if (!isProbablyAddress(addr)) {
+          setStatus('Enter a valid-looking Polymesh address (40–64 chars, no spaces).', true);
+          return;
+        }
+
+        btn.disabled = true;
+        btnLabel.textContent = 'Loading…';
+        setStatus('Querying on-chain data…');
+
+        try {
+          const data = await loadPortfolio(addr);
+          renderPortfolio(data);
+          setStatus('On-chain data loaded from Polymesh mainnet.');
+        } catch (err) {
+          console.error(err);
+          setStatus('Error fetching on-chain data. See console for details.', true);
+        } finally {
+          btn.disabled = false;
+          btnLabel.textContent = 'View';
+        }
+      }
+
+      btn.addEventListener('click', handleView);
+      addrInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          handleView();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
